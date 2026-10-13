@@ -217,7 +217,7 @@ export class UIController {
     if (n.includes('hostel')) return 'hostel';
     if (n.includes('academic') || n.includes('block')) return 'academic';
     if (n.includes('ground') || n.includes('court') || n.includes('pool') || n.includes('gym')) return 'sports';
-    return 'other';
+    return 'amenities';
   }
 
   renderBuildingList() {
@@ -263,14 +263,14 @@ export class UIController {
       `;
 
       item.addEventListener('click', () => {
-        this.selectBuilding(b.key);
+        this.selectBuilding(b.key, true);
       });
 
       this.dom.buildingList.appendChild(item);
     });
   }
 
-  selectBuilding(key) {
+  selectBuilding(key, shouldFocusCamera = true) {
     this.selectedBuildingKey = key;
 
     // Update active class in list
@@ -281,8 +281,12 @@ export class UIController {
     const b = this.graph.buildings.get(key);
     if (!b) return;
 
-    // Highlight in 3D
-    this.scene.focusBuilding(key);
+    // Highlight in 3D (and optionally focus camera)
+    if (shouldFocusCamera) {
+      this.scene.focusBuilding(key);
+    } else {
+      this.scene.highlightBuildingMesh(key);
+    }
 
     // Highlight entrance in 3D
     if (b.primaryEntranceId) {

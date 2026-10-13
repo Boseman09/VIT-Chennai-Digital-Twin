@@ -37,7 +37,8 @@ export class CampusScene {
     // 1. Scene
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x0a0f1d);
-    this.scene.fog = new THREE.FogExp2(0x0a0f1d, 0.00035);
+    // Gentle linear fog starting well beyond campus framing distance
+    this.scene.fog = new THREE.Fog(0x0a0f1d, 1800, 6500);
 
     // 2. Camera
     this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
@@ -229,17 +230,31 @@ export class CampusScene {
   frameCampusView() {
     if (!this.campusRoot) return;
 
-    const bbox = new THREE.Box3().setFromObject(this.campusRoot);
+    // Frame campus using the bounding box of building structures
+    const buildingBbox = new THREE.Box3();
+    let count = 0;
+    this.buildingMeshes.forEach(mesh => {
+      buildingBbox.expandByObject(mesh);
+      count++;
+    });
+
     const center = new THREE.Vector3();
     const size = new THREE.Vector3();
-    bbox.getCenter(center);
-    bbox.getSize(size);
 
-    const maxDim = Math.max(size.x, size.z);
-    const cameraDistance = maxDim * 0.9;
-    const cameraHeight = maxDim * 0.55;
+    if (count > 0) {
+      buildingBbox.getCenter(center);
+      buildingBbox.getSize(size);
+    } else {
+      const fullBbox = new THREE.Box3().setFromObject(this.campusRoot);
+      fullBbox.getCenter(center);
+      fullBbox.getSize(size);
+    }
 
-    this.defaultTarget.copy(center);
+    const maxDim = Math.max(size.x, size.z, 600);
+    const cameraDistance = maxDim * 0.85;
+    const cameraHeight = maxDim * 0.65;
+
+    this.defaultTarget.set(center.x, center.y + 10, center.z);
     this.defaultCameraPos.set(center.x, center.y + cameraHeight, center.z + cameraDistance);
 
     this.camera.position.copy(this.defaultCameraPos);
@@ -355,6 +370,12 @@ export class CampusScene {
 
   setupInteractions() {
     const dom = this.renderer.domElement;
+    this.pointerDownPos = { x: 0, y: 0 };
+
+    dom.addEventListener('pointerdown', (e) => {
+      this.pointerDownPos.x = e.clientX;
+      this.pointerDownPos.y = e.clientY;
+    });
 
     dom.addEventListener('pointermove', (e) => {
       const rect = dom.getBoundingClientRect();
@@ -365,6 +386,10 @@ export class CampusScene {
     });
 
     dom.addEventListener('click', (e) => {
+      // Disambiguate camera drag/orbit from click (threshold 6px)
+      const dist = Math.hypot(e.clientX - this.pointerDownPos.x, e.clientY - this.pointerDownPos.y);
+      if (dist > 6) return;
+
       const rect = dom.getBoundingClientRect();
       this.mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       this.mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;

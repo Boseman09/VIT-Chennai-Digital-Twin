@@ -10,7 +10,8 @@ async function bootstrap() {
   // 1. Initialize Wayfinder Graph
   const graph = new WayfinderGraph();
 
-  // 2. Fetch and parse Wayfinder datasets
+  // 2. Fetch and parse Wayfinder datasets with resilient fallback
+  let dataLoaded = false;
   try {
     const [waypointsRes, entrancesRes, oneWayRes] = await Promise.all([
       fetch('/waypoints.json'),
@@ -18,20 +19,36 @@ async function bootstrap() {
       fetch('/oneWayRoads.json')
     ]);
 
-    const rawWaypoints = await waypointsRes.json();
-    const rawEntrances = await entrancesRes.json();
-    const rawOneWayRoads = await oneWayRes.json();
+    if (waypointsRes.ok && entrancesRes.ok && oneWayRes.ok) {
+      const rawWaypoints = await waypointsRes.json();
+      const rawEntrances = await entrancesRes.json();
+      const rawOneWayRoads = await oneWayRes.json();
 
-    graph.loadWaypoints(rawWaypoints);
-    const graphStats = graph.buildGraph(rawOneWayRoads);
-    const entranceStats = graph.loadBuildingEntrances(rawEntrances);
-
-    console.log('Wayfinder Graph & Entrances Validated:', {
-      graphStats,
-      entranceStats
-    });
+      graph.loadWaypoints(rawWaypoints);
+      graph.buildGraph(rawOneWayRoads);
+      graph.loadBuildingEntrances(rawEntrances);
+      dataLoaded = true;
+      console.log('Wayfinder datasets loaded via primary JSON endpoints.');
+    }
   } catch (err) {
-    console.error('Failed to load Wayfinder datasets:', err);
+    console.warn('Direct dataset fetch failed, attempting path.json fallback:', err);
+  }
+
+  // Fallback to consolidated path.json if direct fetch encountered an issue
+  if (!dataLoaded) {
+    try {
+      const pathRes = await fetch('/path.json');
+      if (pathRes.ok) {
+        const pathData = await pathRes.json();
+        graph.loadWaypoints(pathData.waypoints);
+        graph.buildGraph(pathData.oneWayRoads);
+        graph.loadBuildingEntrances(pathData.buildingEntrances);
+        dataLoaded = true;
+        console.log('Wayfinder data successfully loaded from fallback /path.json');
+      }
+    } catch (fallbackErr) {
+      console.error('All Wayfinder dataset loading attempts failed:', fallbackErr);
+    }
   }
 
   // 3. Initialize Twin Simulation Engine for Mahatma Gandhi Auditorium (Building024)
@@ -85,17 +102,48 @@ async function bootstrap() {
       window.__twinEngine = twinEngine;
       window.__ui = ui;
 
-      // Finish loading bar and focus Auditorium by default
+      // Finish loading bar and select Auditorium WITHOUT moving the camera,
+      // preserving the initial full-campus framed overview
       ui.updateLoading(100, 'Campus 3D Twin Ready!');
       setTimeout(() => {
-        ui.selectBuilding('Building024');
-      }, 700);
+        ui.selectBuilding('Building024', false);
+      }, 500);
     },
     onError: (err) => {
       console.error('Error loading campus GLB:', err);
       const loadingText = document.getElementById('loading-text');
+      const loadingOverlay = document.getElementById('loading-overlay');
       if (loadingText) {
-        loadingText.innerHTML = `<span style="color: #ef4444;">Failed to load campus GLB model: ${err.message || 'Network error'}. Please refresh or verify asset path.</span>`;
+        loadingText.innerHTML = `
+          <div style="color: #ef4444; margin-bottom: 12px;">
+            <strong>Unable to load 3D campus model (/vit_map.glb)</strong><br>
+            <small style="color: #cbd5e1;">${err.message || 'Asset fetch or WebGL decoding failed'}</small>
+          </div>
+          <div style="display: flex; gap: 10px; justify-content: center; margin-top: 14px;">
+            <button id="btn-retry-glb" style="background: #0284c7; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">Retry Loading</button>
+            <button id="btn-data-mode" style="background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">Data-Only Mode</button>
+          </div>
+        `;
+
+        document.getElementById('btn-retry-glb')?.addEventListener('click', () => {
+          location.reload();
+        });
+
+        document.getElementById('btn-data-mode')?.addEventListener('click', () => {
+          if (!ui) {
+            navView = new NavigationView(scene.scene, graph);
+            ui = new UIController({ scene, graph, navView, twinEngine });
+            window.__campusScene = scene;
+            window.__wayfinderGraph = graph;
+            window.__twinEngine = twinEngine;
+            window.__ui = ui;
+            ui.selectBuilding('Building024', false);
+          }
+          if (loadingOverlay) {
+            loadingOverlay.classList.add('fade-out');
+            setTimeout(() => loadingOverlay.remove(), 400);
+          }
+        });
       }
     }
   });
