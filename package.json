@@ -1,0 +1,17 @@
+{
+  "name": "vit-chennai-digital-twin",
+  "version": "1.0.0",
+  "description": "AWS-ready AI Digital Twin of VIT Chennai campus with 3D model, Wayfinder navigation, and auditorium occupancy telemetry",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}

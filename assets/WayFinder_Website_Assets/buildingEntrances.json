@@ -1,0 +1,222 @@
+{
+  "Building": {
+    "displayName": "D1 Block Hostel",
+    "entrances": [
+      189
+    ]
+  },
+  "Building001": {
+    "displayName": "Academic Block 3",
+    "entrances": [
+      240
+    ]
+  },
+  "Building002": {
+    "displayName": "A Block hostel",
+    "entrances": [
+      236
+    ]
+  },
+  "Building003": {
+    "displayName": "Academic Block 4",
+    "entrances": [
+      238
+    ]
+  },
+  "Building004": {
+    "displayName": "D2 Block Hostel",
+    "entrances": [
+      189
+    ]
+  },
+  "Building005": {
+    "displayName": "E Block Hostel",
+    "entrances": [
+      68
+    ]
+  },
+  "Building006": {
+    "displayName": "Academic Block 2",
+    "entrances": [
+      231
+    ]
+  },
+  "Building007": {
+    "displayName": "Academic Block 1",
+    "entrances": [
+      241
+    ]
+  },
+  "Building008": {
+    "displayName": "Swimming Pool",
+    "entrances": [
+      192
+    ]
+  },
+  "Building009": {
+    "displayName": "Sigma Block",
+    "entrances": [
+      255
+    ]
+  },
+  "Building010": {
+    "displayName": "GymKhaana",
+    "entrances": [
+      274
+    ]
+  },
+  "Building011": {
+    "displayName": "Admin Block",
+    "entrances": [
+      41
+    ]
+  },
+  "Building012": {
+    "displayName": "North Square",
+    "entrances": [
+      136,
+      146
+    ]
+  },
+  "Building013": {
+    "displayName": "Alpha Block",
+    "entrances": [
+      272
+    ]
+  },
+  "Building014": {
+    "displayName": "Academic Block 5",
+    "entrances": [
+      156
+    ]
+  },
+  "Building015": {
+    "displayName": "Tennis Court",
+    "entrances": [
+      260
+    ]
+  },
+  "Building016": {
+    "displayName": "Football Ground",
+    "entrances": [
+      261
+    ]
+  },
+  "Building017": {
+    "displayName": "Basketball Court",
+    "entrances": [
+      262
+    ]
+  },
+  "Building018": {
+    "displayName": "volleyball Court",
+    "entrances": [
+      264
+    ]
+  },
+  "Building019": {
+    "displayName": "Ground",
+    "entrances": [
+      266
+    ]
+  },
+  "Building020": {
+    "displayName": "Omega Block",
+    "entrances": [
+      275
+    ]
+  },
+  "Building021": {
+    "displayName": "Cricket Ground",
+    "entrances": [
+      268
+    ]
+  },
+  "Building022": {
+    "displayName": "Guest House",
+    "entrances": [
+      273
+    ]
+  },
+  "Building023": {
+    "displayName": "Student's parking",
+    "entrances": [
+      250,
+      251
+    ]
+  },
+  "Building024": {
+    "displayName": "Mahatma Gandhi Auditorium",
+    "entrances": [
+      199
+    ]
+  },
+  "Building025": {
+    "displayName": "VIT-SEDAXIS",
+    "entrances": [
+      253
+    ]
+  },
+  "Building026": {
+    "displayName": "Student's Parking 2",
+    "entrances": [
+      107,
+      277
+    ]
+  },
+  "Building027": {
+    "displayName": "Staff Parking 1",
+    "entrances": [
+      257
+    ]
+  },
+  "Building028": {
+    "displayName": "Staff Parking 2",
+    "entrances": [
+      259
+    ]
+  },
+  "Building029": {
+    "displayName": "Gazebo",
+    "entrances": [
+      270
+    ]
+  },
+  "Building030": {
+    "displayName": "B Block Hostel",
+    "entrances": [
+      155
+    ]
+  },
+  "Building031": {
+    "displayName": "C Block Hostel",
+    "entrances": [
+      232
+    ]
+  },
+  "Building032": {
+    "displayName": "Site Office",
+    "entrances": [
+      148
+    ]
+  },
+  "Building033": {
+    "displayName": "Transport Office",
+    "entrances": [
+      277
+    ]
+  },
+  "Main_Gate": {
+    "displayName": "Main Gate",
+    "entrances": [
+      111,
+      188
+    ]
+  },
+  "Gate": {
+    "displayName": "2nd Gate",
+    "entrances": [
+      33
+    ]
+  }
+}
